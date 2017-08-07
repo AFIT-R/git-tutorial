@@ -181,12 +181,12 @@ The first thing you need to do is set up an account: https://github.com/
 knitr::include_graphics("signup.png")
 ```
 
-Then go check your e-mail to verify the e-mail address you provided.
+**Use the same e-mail address you used when setting up Git!**
 
 
 ## Set up your profile
 
-```{r, out.width = "800px"}
+```{r, out.width = "700px"}
 knitr::include_graphics("my-profile.png")
 ```
 
