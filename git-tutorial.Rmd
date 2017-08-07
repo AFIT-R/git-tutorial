@@ -87,15 +87,6 @@ There are a lot of different ways to use Git, for example, the **command line**,
 * The desktop application is convenient too, but not available on all operating systems
 
 
-##
-
-The basic Git workflow goes something like this:
-
-1. You modify files in your working tree.
-2. You stage the files, adding snapshots of them to your staging area.
-3. You do a commit, which takes the files as they are in the staging area and stores that snapshot permanently to your Git directory.
-
-
 ## Installing Git
 
 Installation is rather straightforward: https://git-scm.com/downloads. Just follow the instructions for your particular operating system
@@ -130,11 +121,21 @@ $ git config --global user.email greenwell.brandon@gmail.com
 
 ## Initializing a repo in an existing directory
 
+Make a new folder called `arithmetic` anywhere on your computer (e.g., the Desktop) that contains a single R script called `add.R` containing the function
+```r
+add <- function(x, y) {
+  x * y
+}
+```
+
+
+## Initializing a repo in an existing directory
+
 If you want to begin tracking an existing project in Git, you need to start by going to the project's root directory. For example, 
 ```shell
-cd C:/Users/greenweb/Desktop/devel/pkgbday
+cd C:/Users/greenweb/Desktop/arithmetic
 ```
-takes me to the sub folder called `pkgday` on my Desktop. Then, to initialize this as a Git repo, just type
+takes me to the folder called `arithmetic` on my Desktop. Then, to initialize this as a Git repo, just type
 ```shell
 git init
 ```
@@ -151,26 +152,8 @@ git add --all
 ```
 then type:
 ```shell
-git commit -m "very brief descriptive message"
+git commit -m "first commit"
 ```
-
-
-## Initializing a repo in an existing directory
-
-Now Git will start tracking all the files in the repo. Whenever you make changes to ANY file in this repo, just retype the commands* with a new descriptive message:
-```shell
-git add --all
-git commit -m "added new plot function"
-```
-
-**Tip\:** It's good practice to do this every time you make a key change (e.g., fix a typo, add a new function to an R script, etc.).
-
-\* Make sure you're in the right directory!
-
-
-## All done!
-
-<center>![](giphy-shaun.gif)</center>
 
 
 # GitHub
@@ -222,11 +205,46 @@ knitr::include_graphics("new-repo-2.png")
 ```
 
 
-
 ## Creating a new repo
 
-```{r, out.width = "600px"}
+```{r, out.width = "700px"}
 knitr::include_graphics("new-repo-3.png")
 ```
 
 
+## Creating a new repo
+
+```{r, out.width = "700px"}
+knitr::include_graphics("new-repo-4.png")
+```
+
+
+## Creating a new repo
+
+Refresh your browswer and see if it worked!
+
+```{r, out.width = "700px"}
+knitr::include_graphics("new-repo-5.png")
+```
+
+
+## Making changes and pushing them to GitHub
+
+Fix the obvious typo in `add.R`. Then, take a snapshot (i.e., `git add/commit`) and push the changes to GitHub (i.e., `git push`)!
+```shell
+git add --all
+git commit -m "fix typo"
+git push origin master
+```
+Refresh your browser to see the changes.
+
+**Tip\:** It's good practice to do this every time you make a key change (e.g., fix a typo, add a new function to an R script, etc.).
+
+\* Make sure you're in the right directory!
+
+
+## All done!
+
+<center>![](giphy-shaun.gif)</center>
+
+**Any questions?**
