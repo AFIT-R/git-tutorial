@@ -1,0 +1,928 @@
+---
+title: "course"
+author: "Jason Freels"
+date: "December 20, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Week 1: Shiny, Manipulate, rCharts, GoogleVis, shinyApps, plotly
+Shiny Data Products
+What is Shiny?
+- a platform for creating interactive R programs embedded into a web page
+- suppose you create a prediction algorithm, with Shiny you can very easily create web input form that calls R and thus your prediction algorithm and displays the results
+- using shiny minimizes time to create a simple powerful web-based interactive data product in R (point and click, don't need to be a web developer)
+- however, lacks full featured flexibility
+- Shiny is made by R Studio people
+Some mild prerequisites
+- not really required, but some html, css, js helpful (js for interactivity)
+- Shiny uses 'bootstrap style' - not statistics bootstrap - looks nice, renders well on mobile
+What else is out there?
+- anything else requires deep knowledge of web client/server programming, eg with CGI scripts
+- OpenCPU by Jerome Ooms: API for calling R from web docs, with server or use your own; more flexible, but need to know more
+Context:
+- you have prediction algorithm to predict risk for developing diabetes
+- want patients, caregivers to enter data and take preventative measures
+- want to create a website for predictors, obtain prediction
+- algorithm is prediction score:
+diabetesRisk <- function(glucose) glucose/200
+Getting started:
+- latest R release
+- Windows, need Rtools
+install.packages('shiny')
+library(shiny)
+- see Rstudio tutorial, http://rstudio.github.io/shiny/tutorial; this lecture is excerpts with insights
+- some of the proposed interactive plotting uses of Shiny could be handled by manipulate function
+- rCharts will be covered in a different lecture
+A Shiny project
+- a directory containing at least: ui.R to control looks, server.R to control functionality
+ui.R:
+library(shiny) 
+shinyUI(pageWithSidebar(
+headerPanel("Data science FTW!"), 
+sidebarPanel(h3('Sidebar text') ),
+mainPanel(h3('Main Panel text')
+) ))
+server.r:
+library(shiny) 
+shinyServer(
+function(input, output) {} ) # not returning anything
+To run it:
+- in R, change to the directores with these files and type runApp()
+- or put the path to the dir as an argument
+- it should open a browser window with the app running
+NOTE: beware the commas, if something doesn't work, check that
+R functions for HTML markup: ui.R:
+shinyUI(pageWithSidebar( 
+headerPanel("Illustrating markup"), 
+sidebarPanel(
+h1('Sidebar panel'), 
+h1('H1 text'), 
+h2('H2 Text'), 
+h3('H3 Text'), 
+h4('H4 Text')
+), mainPanel(
+h3('Main Panel text'), code('some code'), p('some ordinary text')) 
+))
+Illustrating inputs ui.R
+shinyUI(pageWithSidebar( 
+headerPanel("Illustrating inputs"), 
+sidebarPanel(
+numericInput('id1', 'Numeric input, labeled id1', 0, min = 0, max = 10, step = 1), # middle 0 is default
+checkboxGroupInput("id2", "Checkbox",
+c("Value 1" = "1", "Value 2" = "2", "Value 3" = "3")),
+dateInput("date", "Date:") ), # date will bring down a calendar
+mainPanel(
+) 
+))
+Part of ui.R: this is how you can grab and display the outputs
+mainPanel(
+h3('Illustrating outputs'),
+h4('You entered'), verbatimTextOutput("oid1"), 
+h4('You entered'), verbatimTextOutput("oid2"), 
+h4('You entered'), verbatimTextOutput("odate")
+)
+the oids come from:
+server.R
+shinyServer( 
+function(input, output) {
+output$oid1 <- renderPrint({input$id1}) # renderPrint means output is printed text
+output$oid2 <- renderPrint({input$id2}) 
+output$odate <- renderPrint({input$date})
+} )
+Building our prediciton function
+shinyUI( pageWithSidebar(
+# Application title 
+headerPanel("Diabetes prediction"),
+sidebarPanel(
+numericInput('glucose', 'Glucose mg/dl', 90, min = 50, max = 200, step = 5), 
+submitButton('Submit')
+), mainPanel(
+h3('Results of prediction'),
+h4('You entered'), verbatimTextOutput("inputValue"), 
+h4('Which resulted in a prediction of '), verbatimTextOutput("prediction")
+) )
+)
+server.R
+diabetesRisk <- function(glucose) glucose / 200 # note if function is long can put in file and instead source() it here
+shinyServer( 
+function(input, output) {
+output$inputValue <- renderPrint({input$glucose})
+output$prediction <- renderPrint({diabetesRisk(input$glucose)}) }
+)
+Image example:
+- create a histogram, put slider on so that user has to guess the mean
+ui.R:
+shinyUI(pageWithSidebar( 
+headerPanel("Example plot"), 
+sidebarPanel(
+sliderInput('mu', 'Guess at the mean',value = 70, min = 62, max = 74, step = 0.05,) ),
+mainPanel( plotOutput('newHist')
+) ))
+server.R
+library(UsingR) 
+data(galton)
+shinyServer( 
+function(input, output) {
+output$newHist <- renderPlot({
+hist(galton$child, xlab='child height', col='lightblue',main='Histogram') 
+mu <- input$mu
+lines(c(mu, mu), c(0, 200),col="red",lwd=5)
+mse <- mean((galton$child - mu)^2)
+text(63, 150, paste("mu = ", mu))
+text(63, 140, paste("MSE = ", round(mse, 2)))
+})
+} )
+Tighter control over style
+- all style elements handled through ui.R
+- instead, you can create a www directory and an index.html file in that directory
+- see link (? cannot access it) for specifics
+- need to have specific js libraries and appropriately name ids and classes (out of class scope)
+Other things Shiny can do:
+- allow users to upload or download files
+- have tabbed main panels
+- have editable data tables
+- have a dynamic UI
+- user defined inputs and outputs
+- put a submit button so that Shiny only executes complex code after user hits submit
+Distributing a Shiny app:
+- realize, as we've run it so far: you are running on your computer, running a little web server, your browser going through local host to that webserver and connecting on your computer
+- quickest: to send/github etc the app directory and they can then call runApp()
+- could create an R pkg and create a wrapper that calls runApp()
+- these 2 only work if user has R...
+Another option: run a shiny server
+- need to set up, need to some Linux experience
+- easiest if you use one of the virtual machines where they already have Shiny servers running well (eg AWS)
+- setup is out of class scope, involves some linux server admin
+- groups are creating a Shiny hosting service that will presumably eventually be a ffs or fremium service
+- don't put system calls in your code, it introduces security concerns
+Shiny part 2
+for most, server.R is harder than ui.R, here are more details
+see http://shiny.rstudio.com/tutorial
+Details
+- code that you put before shinyServer in the server.R function gets called once when you do runApp()
+- code inside the unnamed function of shinyServer(function(input, output){ but not in a reactive statement will run once for every new user (or page refresh)
+- code in reactive functions of shinyServer get run repeatedly as needed when new values are entered (reactive functions are those like render* statements like renderPlot, renderText
+Experiment: this is useful to show how page refreshes change things... shiny only executes what is needed; reactive code statements react to widget input, doesn't rerun other stuff when you input a new value
+ui.R
+shinyUI(pageWithSidebar( 
+headerPanel("Hello Shiny!"), 
+sidebarPanel(
+textInput(inputId="text1", label = "Input Text1"),
+textInput(inputId="text2", label = "Input Text2") ),
+mainPanel(
+p('Output text1'), textOutput('text1'),
+p('Output text2'), textOutput('text2'),
+p('Output text3'), textOutput('text3'),
+p('Outside text'), textOutput('text4'),
+p('Inside text, but non-reactive'), 
+textOutput('text5')
+) ))
+server.R - set x <- 0 before running
+library(shiny) 
+x <<- x + 1 # note x should be defined before you do the runApp()
+y <<- 0 # note <<- assigns globally
+shinyServer( 
+function(input, output) {
+y <<- y + 1
+output$text1 <- renderText({input$text1})
+output$text2 <- renderText({input$text2})
+output$text3 <- renderText({as.numeric(input$text1)+1}) 
+output$text4 <- renderText(y)
+output$text5 <- renderText(x)
+} )
+Trying it:
+- type runApp()
+- notice hitting refresh increments y, but entering values in textbox does not
+- notice x is always 1
+- watch how it updated text1 and text2 as needed
+- doesn't add 1 to text1 every time a new text2 is input
+- IMPORTANT: try runApp(display.mode = 'showcase') - this shows your 2 code files below, so you don't have to keep flipping back and forth
+Reactive expressions
+- render* reacts to widget input
+- sometimes to spped up your app, you want reactive operations (those operations that depend on widget input values) to be performed outside of a render* statement
+- eg, you want to do some code that gets reused in several render* statements and don't want to recalculate it for each
+- the reactive function is made for this purpose
+Example: add 100 once, display it twice (server.R)
+shinyServer( 
+function(input, output) {
+x <- reactive({as.numeric(input$text1)+100})
+output$text1 <- renderText({x() }) 
+output$text2 <- renderText({x() + as.numeric(input$text2)})
+} )
+As opposed to: (same functionality, calc done twice, no biggie for this but for other stuff...)
+shinyServer( 
+function(input, output) {
+output$text1 <- renderText({as.numeric(input$text1)+100 }) 
+output$text2 <- renderText({as.numeric(input$text1)+100 +
+} )
+Discussion:
+- do runApp(display.mode = 'showcase')
+- while inconsequential, the 2nd example has to add 100 twice every time text1 is updated for the second set of code
+- also note the somewhat odd syntax for reactive variables (calling x with () ie. renderText({x() })
+Non-reactive reactivity
+- sometimes you don't want shiny to immediately perform reactive calcs from widget inputs
+- i.e, you want something like a submit button
+ui.R:
+shinyUI(pageWithSidebar( headerPanel("Hello Shiny!"), 
+sidebarPanel(
+textInput(inputId="text1", label = "Input Text1"), 
+textInput(inputId="text2", label = "Input Text2"), 
+actionButton("goButton", "Go!") # id is goButton, label you see is Go!
+), mainPanel(
+) ))
+server.R:
+shinyServer( function(input, output) {
+output$text1 <- renderText({input$text1}) 
+output$text2 <- renderText({input$text2}) 
+output$text3 <- renderText({
+input$goButton # depend on goButton
+isolate(paste(input$text1, input$text2)) }) # isolates doing statement until go btton is pressed... not the other two update right away, just the text 3 waits
+} )
+Try it out:
+- notice it doesn't display output text3 until go button is pressed
+- input$goButton (or whatever) gets increased by one for every time pushed
+- so, when in reactive code (render or reactive) you can use conditional statements like below to only execute code on the first button press or to not execute code until the first or subsequent button press
+if (input$goButon == 1) { conditional statements }
+Example:
+output$text3 <- renderText({
+if (input$goButton == 0) "You have not pressed the button" 
+else if (input$goButton == 1) "you pressed it once"
+else "OK quit pressing it"
+})
+More on layouts
+- sidebar layout with a main panel is easiest
+- using shinyUI(fluidpage( is much more flexible and allows tighter access to the bootstrap styles
+see (http://shiny.rstudio.com/articles/layout-guide.html)
+fluidRow statements create rows and then the column function from within it can create columns(http://shiny.rstudio.com/articles/layout-guide.html)- tabsets, navlists and navbars can be created for more complex apps
+For Directly using html:
+- use for more complex layouts (http://shiny.rstudio.com/articles/html- ui.html)
+- if you are a strong web dev you might find using R for web annoying
+- create a dir called www in same dir with server.R
+- have an index.html page in that dir
+- your named input vars will be passed to server.R <input type="number" name="n" value="500" min="1" max="1000" />
+- your server.R output will have class definitions of the form shiny-(something) <pre id="summary" class="shiny-text-output"></pre>
+Debugging techniques for Shiny
+- debugging shiny apps can be tricky
+- we saw that runApp(displayMode = 'showcase') highlights execution while a shiny app runs
+- using cat in your code displays output to stdout (which is R console)
+- the browser() funciton can interrupt execution and can be called conditionally (see http://shiny.rstudio.com/articles/debugging.html)
+Manipulate
+Shiny does a lot, Manipulate is for quick and dynamic graphics
+- suppose you want to create a quick interactive graphic... now, and intended users also use Rstudio
+- manipulate is a really cool solution, often all you need to quickly make interactive graphics
+Documentation:
+- well documented in Rstudio site, http://www.rstudio.com/ide/docs/advanced/manipulate
+from there, try this: library(manipulate); manipulate(plot(1:x), x = slider(1,100))
+you can create a slider, checkbox, or picker (drop down) and have more than one
+See example(s) from regression class
+rCharts
+- a way to create interactive javascript visualizations using R
+- so you don't have to learn complex tools like D3
+- so you simply work in R learning a minimal amount of new syntax
+- written by Ramnath V. who also wrote slidify (framework for class lectures)
+- this lecture goes through http://ramnathv.github.io/rCharts/
+Example
+require(rCharts)
+haireye = as.data.frame(HairEyeColor)
+n1 <- nPlot(Freq ~ Hair, group='Eye', type='multiBarChart', data=subset(haireye, Sex == 'Male'))
+n1$save('fig/n1.html', cdn=T)
+cat('<iframe src="fig/n1.html" width=100%, height=600></iframe>')
+the last cat() is for embedding into Slidify
+For some reason, my html does not show up in browser, but it does have code in it...
+nvD3 run
+Slidify interactive
+- embed an rChart in a slidify doc
+- in the YAML, yaml ext_widgets : {rCharts: ["libraries/nvd3"]}
+- or if you use more than one library, YAML example yaml ext_widgets : {rCharts: ["libraries/highcharts", "libraries/nvd3", "libraries/morris"]}
+Viewing the plot
+- the object n1 contains the plot (type n1 to bring it up)
+- n1$ and tab to see various functions contained in the object
+- n1$html() prints out the html for the plot
+- n1$save(filename), then bring code back into slidify doc - this is recommended for slidify, not just looking
+Deconstructing another example
+## example 1: facetted scatterplot
+names(iris) = gsub("\\.", "", names(iris))
+r1 <- rPlot(SepalLength ~ SepalWidth | Species, data=iris, color='Species', type='point')
+r1$save('fig/r1.html', cdn=TRUE)
+cat('<iframe src="fig/r1.html" width=100%, height=600></iframe>')
+When run: (3 plots for each species, x=width, y=length)
+Example 2: facetted barplot
+r2 <- rPlot(Freq ~ Hair | Eye, color='Eye', data=haireye, type='bar')
+r2$save('fig/r2.html', cdn=T)
+cat('<iframe src="fig/r2.html" width=100%, height=600></iframe>')
+when run, shows 4 bar plots, 3 on first row, one in next
+How to get the js/html or publish an rChart
+r1 <- rPlot(mpg ~ wt | am + vs, data=mtcars, type='point', color='gear')
+r1$print('chart1') # print out the js
+r1$save('myPlot.html') # save as html
+r1$publish('myPlot', host='gist') # save to gist, rjson required
+r1$publish('myPlot', host='rpubs') # save to rPubs
+rCharts has links to several libraries
+- see examples
+- Ramnath mentions that io2012 and polychart have conflicting js... they seem to work, but errors if you load polychart library... but beware
+morris: time series, note legend in upper right is over data
+data(economics, package="ggplot2")
+econ <- transform(economics, data=as.character(date))
+m1 <- mPlot(x = 'date', y=c('psavert', 'uempmed'), type='Line', data=econ)
+m1$set(pointSize=0, lineWidth=1)
+m1$save('fig/m1.html', cdn=T)
+cat('<iframe src="fig/m1.html" width=100%, height=600></iframe>')
+xCharts: this is plot, multicolored; no legend
+require(reshape2)
+uspexp <- melt(USPersonalExpenditure)
+names(uspexp)[1:2] = c('category', 'year')
+x1 <- xPlot(value ~ year, group = 'category', data=uspexp, type='line-dotted')
+x1$save('fig/x1.html', cdn=T) cat('<iframe src="fig/x1.html" width=100%, height=600></iframe>')
+Leaflet: this shows a map of London with 2 points. you can zoom, pan, etc.
+map3 <- Leaflet$new()
+map3$setView(c(51.505, -0/09), zoom = 13)
+map3$marker(c(51.5, -0.09), bindPopup = "<p> Hi. I am a popup. </p>")
+map3$marker(c(51.495, -0.083), bindPopup = "<p> Hi. I am another popup. </p>") map3$save('fig/map3.html', cdn=T) cat('<iframe src="fig/map3.html" width=100%, height=600></iframe>')
+Rickshaw: like xCharts but with legend. interactive and has slider
+usp = reshape2::melt(USPersonalExpenditure)
+# get the decades into a date Rickshaw likes
+usp$Var2 <- as.numeric(as.POSIXct(paste0(usp$Var2, "-01-01")))
+p4 <- Rickshaw$new()
+p4$layer(value ~ Var2, group = "Var1", data=usp, type='area', width=560)
+# add a helpful slider this easily; other features TRUE as a default
+p4$set(slider = TRUE)
+p4$save('fig/p4.html', cdn=T) cat('<iframe src="fig/p4.html" width=100%, height=600></iframe>')
+highchart: plot 3 things, bubble scatter line, gray, green, blue. interactive, example was confusing.
+h1 <- hPlot(x="Wr.Hnd", y="NW.HND', data=MASS::survey, type = c('line', 'bubble', 'scatter'), group = 'Clap', size='Age') h1$save('fig/h1.html', cdn=T) cat('<iframe src="fig/h1.html" width=100%, height=600></iframe>')
+rCharts summarized
+- makes creating interactive javascript visualizations in R ridiculously easy
+- however, non-trivial customization is going to require knowledge of javascript
+- if what you want is not too big of a deviation from the rCharts examples, then fine; otherwise, challenging to extend w/o fairly deep knowledge of the JS libraries that it's calling
+- rCharts is under fairly rapid development
+googleVis
+provides an interface to the Google Vis API
+Basic idea:
+- R function creates an HTML page
+- HTML page calls Google Charts API
+- result is an interactive HTML graphic
+Example:
+suppressPackageStartupMessages(library(googleVis)) # may get version warning, ok...
+M <- gvisMotionChart(Fruits, 'Fruit', 'Year', options = list(width=600, height=400))
+print(M, 'chart') # print for slidify, otherwise can use plot(M) to open in browser
+interactive chart
+Charts in googleVis
+"gvis + ChartType"
+- motion charts: gvisMotionChart
+- interactive maps: gvisGeoChart
+- interactive tables: gvisTable
+- line charts: gvisLineChart
+- bar charts: gvisColumnChart
+- tree maps: gvisTreeMap
+see http://cran.r-project.org/web/packages/googleVis/googleVis.pdf
+Plots on maps:
+G <- gvisGeoChart(Exports, locationvar = "Country", colorvar = "Profit", options = list(width = 400, height = 400))
+print(G, "chart")
+Specify a region:
+G2 <- gvisGeoChart(Exports, locationvar = "Country", colorvar = "Profit", options = list(width = height = 400, region = "150")) print(G2, "chart")
+Parameters to set under options: color, etc.: see https://developers.google.com/chart/interactive/docs/gallery/geochart, see configuration options
+Setting more options: (example showing capabilities)
+df <- data.frame(label=c("US", "GB", "BR"), val1=c(1,3,4), val2=c(23,12,32)) 
+Line <- gvisLineChart(df, xvar="label", yvar=c("val1","val2"),
+options=list(title="Hello World", legend="bottom", 
+titleTextStyle="{color:'red', fontSize:18}", 
+vAxis="{gridlines:{color:'red', count:3}}", 
+hAxis="{title:'My Label', titleTextStyle:{color:'blue'}}", 
+series="[{color:'green', targetAxisIndex: 0},
+{color: 'blue',targetAxisIndex:1}]", 
+vAxes="[{title:'Value 1 (%)', format:'##,######%'}, {title:'Value 2 (\U00A3)'}]", 
+curveType="function", width=500, height=300
+))
+print(Line, "chart")
+Combining multiple plots together, in panel plots. merged together 2 at a time
+G <- gvisGeoChart(Exports, "Country", "Profit",options=list(width=200, height=100)) 
+T1 <- gvisTable(Exports,options=list(width=200, height=270))
+M <- gvisMotionChart(Fruits, "Fruit", "Year", options=list(width=400, height=370)) 
+GT <- gvisMerge(G,T1, horizontal=FALSE)
+GTM <- gvisMerge(GT, M, horizontal=TRUE,tableOptions="bgcolor=\"#CCCCCC\" cellspacing=10")
+print(GTM, "chart")
+Seeing the HTML code (print(M) not print(M, 'chart'))
+M <- gvisMotionChart(Fruits, "Fruit", "Year", options = list(width = 600, height = 400)) 
+print(M)
+Things you can do with Google Vis
+- the visualizations can be embedded in websites with HTML code
+- dynamic visualizations can be built with Shiny, Rook, R.rsp
+- embed them in R markdown based docs - set results="asis"; can be used with knitr and slidify
+More info: demo(googleVis), and web links on cran etc.
+Other
+ShinyApps.io needed for course project
+Go to: https://wwww.shinyapps.io/coursera
+choose to create account, recommend you link to Github
+need to install shinyapps, shiny, devtools, Rtools (last maybe for Windows)
+then install from github (follow instructions)
+secret key... copy, paste those into R command line
+Deploying app: do library(), runApp(), deployApp() - will deploy app on shiny server, after a moment.
+check website to be sure it is running
+navigating seems self explanatory
+Plotly
+a platform for doing interactive graphics, analyses... here focus on how it interacts with R
+1. create account or link to Github
+2. click learn button, choose R, ggplot2
+3. click getting started, useful web page
+4. set credential command, run in R once. to set new key, click your name in plotly, reset key
+library(plotly)
+library(ggplot2)
+g <- ...
+g
+py <- plotly()
+out <- py$ggplotly(g)
+out$response$url # can grab plotly url
+now has some interactivity, not just ggplot stuff
+you can change plots from the web page, don't have to go back to change R coding
+you can share on fb or twitter
+Top | Bottom (other notes)
+
+Week 2: Slidify, RStudio Presenter
+Data Analysis Reports
+can be simple or formal
+see exampleProject on course website - has subfolders code, data, figures, writing. has file prompt.pdf
+prompt.pdf: describes the problem, what analysis will be performed
+data: if possible, store the data
+code: rawcode and finalcode... rawcode: Rmd and html, quick and dirty figures, more for you than for turning in. finalcode: Rmd and html, only analyses to be shared with others. figures pretty good, not perfect, but represent final analyses
+figures: final ones, 'pretty' plots
+writing: text doc with Intro, methods, results, conclusions, references. Also a doc for final figure and captions to figure.
+Slidify
+Slidify:
+- for data-centric presentations
+- created by Ramnath V (github.com/ramnathv) to streamline the process of creating and publishing R driven presentations, allowing for easy recompiling
+- is an amalgamation of other technologies including knitr, Markdown, several javascript libraries for HTML5 presentations
+- infinitely extendable and customizable, and easy to use
+- allows embedded code chunks and math formulas (js library mathjax, typed in LaTeX) to help with reproducibility
+- are HTML files
+- (Brian puts his on github and can pull from any computer set up for presentations)
+To install:
+install.packages("devtools")
+library(devtools)
+install_github('slidify', 'ramnathv')
+install_github('slidifyLibraries', 'ramnathv')
+library(slidify)
+Set your working directory, then create your project, give it a name
+author("first_deck") (easiest way, or you can do things manually)
+This causes:
+- a directory with the name of the project is created inside of your working directory
+- inside this dir, an assets directory with file index.Rmd
+- also folders in assets: css, img, js, layouts
+- the index.Rmd will open up in RStudio
+- any custom css, images, js you want should be put into the respective folders
+About index.Rmd: YAML, the code at the top (Yet Another Markdown Language - stuff between --- and ---)
+- title, subtitle, author, job, whose slide framework, which code highlighter, widgets, etc.
+- you can add other fields: logo, url for path to assets or other folders (remember ../ is parent), hitheme = theme for code highlighter
+examples:
+- framework: io2012 # (io2012, html5slides, shower, dzslides, ... does formatting, eg size of titles)
+- highlighter: highlight.js # (highlight.js, prettify, highlight ... effects)
+- hitheme: tomorrow
+- widgets: [] # (mathjax, quiz, bootstrap) # bootstrap is Twitter style
+mode: selfcontained # (standalone, draft... depends when and where you will give presentation, internet access)
+Making slides
+- first 2 are made under the YAML
+- ## Side title (## is h1... can you use more #?)
+- --- end of slide
+- .class #id for css customization
+- between the ## and --- is yours to design, can use valid R Markdown OR HTML.
+To compile: within working dir which has the index.Rmd:
+slidify("index.Rmd")
+you can also just do knitHTML button??
+This will cause an HTML file to appear in your current directory. You can browse manualy or
+library(knitr); browseURL("index.html")
+Publishing to Github
+- first log in to Github and create a new empty repo
+- use this, replace user with your username and repo with name of repo
+publish_github(username="USER", repo="REPO") # note repo is NOT full url
+HTML5 Deck Frameworks, compatible with Slidify for making presentations:
+- io2012 (google io theme)
+- html5slides
+- deck.js
+- dzslides v- landslide
+- Slidy
+Mathjax:
+- you can include LaTeX math formatting as follows:
+- edit YAML: widgets : [mathjax]
+- enter inline math code with, eg $x^2$ for x squared
+- centered code, eg quadratic formula, fraction with sqrt plus/minus etc: $$\frac{-b \pm \sqrt{b^2 - 4 a c}}{2a}$$
+HTML
+- include in Rmd and it will keep as html when slidified (usually)
+- especially useful for stuff like images, tables, where you need finer control of html options
+- remember you can edit the final html slide... not the best solution though for reproducibility, but useful in a pinch
+- you can also incorporate JS or other stuff
+Adding interactive elements to slidify
+- like quiz questions, interactive Rchrts plots, Shiny apps
+- you could do this directly with html/js, or,
+- more easily, the dev version of slidify has this built in
+- see: http://slidify.github.io/dcmeetup/demos/interactive/
+Example, quiz question, RMD syntax:
+## Question 1
+What is 1+1?
+1. 1
+2. _2_
+3. 3
+4. 4
+*** .hint This is a hint
+*** .explanation This is an explanation
+below the question and options appears 4 links: submit, show hint, show answer, clear
+RStudio Presenter
+- presentation authoring tool within RStudio's IDE
+- if you know slidify, you will be familiar with this tool
+- code authored in generalized markdown format, allows for code chunks
+- output is html5 presentation
+- file index for presenter file is is.Rpres, which gets converted to an .md file and also to html if desired
+- preview tool in RStudio, GUIs for publishing to Rpubs or viewing/creating an html file
+Authoring content
+- see guide: www.rstudio.com/ide/docs/presentations/overview
+- quick start: file - new file - R presentation (or alt-f, f, p)
+- use basically the same R markdown format as slidify/knitr (single quotes for inline code, triple for block code, same options for code eval, caching, hiding, etc.)
+Note you can navigate via windows in RStudio, through the doc, and find where you want to edit, etc.
+date: `r date()`
+does have === (3 or more =) to separate the slides
+Compiling and tools
+- RStudio auto formats and runs code every time you save doc
+- Mathjax js library loaded by default
+- slide navigation button on preview: clicking notepad icon takes you to that slide in the deck
+- clicking 'more' yields options for: clearing knitr cache, viewing in browser (creating a temp file in a temp folder somewhere), create a html file to save
+- a refresh button
+- a zoom button
+Visuals:
+- transitions, cube effect, after each slide, YAML-like code, eg transition: rotate {linear, rotate, cube.. see options in rstudio link}
+Hierarchical organization structure:
+type: typename # {section, subsection, ... } see rstudio link for more
+Columns: do whatever for column 1, then put ** on a line by itself with blank lines before / after, then put whatever for column 2. Somewhere there is option for widths.
+Changing slide font:
+font-family: fontname # after the slide. see web link. follows css font families
+font-import: url # to import fonts
+Caveats: fonts must be present on system you're presenting on, good to have fallback font. must be connected to internet to use imported fonts.
+Really changing things:
+- html5, css, you can change as you like
+- a css file with the same names as your presentation will be autoimported
+- you can use css: file.css to import one
+- have to create named classes and use class: classname to get slide-specific style control from your css. or, you can apply within a <span>
+- ultimately, you can edit resulting html as you wish, as a last resort
+Slidify vs RStudio Presenter
+Slidify:
+- flexible control from the R MD file
+- rapid ongoing development
+- large user base (see stackexchange)
+- lots of styles and options
+- steeper learning curve
+- more command-line oriented
+RStudio Presenter
+- embedded in RStudio
+- more GUI oriented
+- very easy to get started
+- smaller set of easy styles and options
+- default styles look very nice
+- ultimately as flexible as slidify with a little CSS and HTML knowledge
+Quick into to gh-pages (GitHub pages)
+For Rpres or Slidify
+from Rpres:
+export it to html
+in terminal
+gt init
+ls
+git add *
+git commit -a -m "inital commit..."
+On github, create repo. it will show you steps for initial push, you can copy that
+git remote add origin git@...
+git push -u origin master
+check back at github, you should see them
+have the pres so that you can view html page on github, where github is doing the website hosting... create branch called gh-pages
+git branch gh-pages
+git checkout gh-pages
+ls
+git push origin gh-pages
+now check branch, you should see gh-pages. you also need a .nojekyll file on your github page, tells git not to do fancy html stuff in gh-pages, just do straight html:
+touch .nojekyll
+git add .nojekyll
+git commit -a -m "added a .nojekyll file"
+git push origin gh-pages
+note, first time, may take up to 10 minutes.
+you could fork instead, then, you will have to commit at least one change before you can view content on gh-pages
+go to: lizbaumann.github.io/testPres/testPres.html#
+For Slidify: use publish command. one concern: if no git in your path (Windows), you can do it manually, use github gui
+Top | Bottom (other notes)
+
+Week 3:
+Top | Bottom (other notes)
+
+Week 4: Building R Packages; R Classes and Methods
+Building R Packages
+What is an R Package?
+- a mechanism for extending the basic functionality of R
+- a collection of R functions, or other (data) objects
+- organized in a systematic fashion to provide a minimal amount of consistency
+- written by users / developers everywhere
+Where are these R pkgs?
+- primarily from CRAN and Bioconductor - can use install.packages()
+- also GitHub, Bitbucket, Gitorious, etc - use install_github() from devtools package
+- you do not have to put a pkg on a central repository, but doing so makes it easy for others to install
+What's the point?
+- why not just make some code available?
+- documentation / vignettes
+- centralized resources like CRAN
+- minimal standards for reliability and robustness
+- maintainability / extension
+- interface definintion / clear API
+- users know that it will at least load properly
+Package development process
+- write some code in an R script file (.R)
+- incorporate R script file into R package structure
+- write documentation for user functions
+- include some other material (examples, demos, datasets, tutorials)
+- package it up...
+- submit pkg to CRAN or Bioconductor
+- push source code repo to GitHub or other source code sharing web site
+- people find all kinds of problems with your code...
+* scenario #1: they tell you and expect you to fix it
+* they fix it and show you the changes
+- you incorporate the changes and release a new version
+R Package Essentials
+- an R package is started by creating a directory with the name of the R package
+- a DESCRIPTION file which has info about the package
+- R code, in the R/ sub-directory
+- documentation, in the man/ sub-directory
+- NAMESPACE (optional, but do it)
+- full requirements in Writing R Extensions
+- build and check
+The DESCRIPTION file
+- Package (name, eg library(name))
+- Title: full name
+- Description: longer desc of pkg, usually in one sentence
+- Version: version #, usually M.m-p format
+- Author, Authors@R: name of original author(s)
+- Maintainer: name and email of person who fixes problems
+- License: for the source code
+DESC file - Optional but usually used
+- Depends: other R pkgs yours depends on
+- Suggests
+- Date: release date in YYYY-MM-DD format
+- URL: pkg home page
+- Other fields can be added
+DESC file Example: gpclib
+Package 'gpclib'
+July 2, 2014
+Depends R (>= 2.14.0), methods
+Imports graphics
+LazyLoad yes
+Version 1.5-5
+Date 2013-04-01
+Title General Polygon Clipping Library for R
+Author Roger D. Peng <rpeng@jhsph.edu> with contributions from Duncan
+Murdoch and Barry Rowlingson; GPC library by Alan Murta
+Maintainer Roger D. Peng <rpeng@jhsph.edu>
+Description General polygon clipping routines for R based on Alan Murta's C library
+License file LICENSE
+URL http://www.cs.man.ac.uk/~toby/gpc/,http://github.com/rdpeng/gpclib
+NeedsCompilation yes
+License_restricts_use yes
+Repository CRAN
+Date/Publication 2013-04-01 20:03:33
+R code
+- copy R code into the R/ subdir
+- there can be any number of files in this dir
+- usually separate out files into logical groups
+code for all functions should be included here and not anywhere else in the pkg
+The NAMESPACE file
+- used to indicate which functions are exported
+- exported functions can be called by the user and are considered the public API
+- non-exported functions cannot be called directly by the user (but the code can be viewed)
+- hides implementation details from users and makes a cleaner package interface
+- you can also indicate what functions you import from other packages
+- this allows for your pkg to use other pkgs without making other pkgs visible to the user
+- importing a function loads the pkg but does not attach it to the search list
+- Key directives:
+- export("<function>")
+import("<package>")
+importFrom("<package>", "<function>")
+- also important:
+- exportClasses("<class>")
+exportMethods("<generic>")
+NAMESPACE file: mvtsplot package
+export("mvtsplot")
+importFrom(graphics, "Axis")
+import(splines)
+NAMESPACE file: gpclib package
+export("read.polyfile", "write.polyfile")
+importFrom(graphics, plot)
+exportClasses("gpc.poly", "gpc.poly.nohole")
+exportMethods("show", "get.bbox", "plot", "intersect", "union", "setdiff", "[", "append.poly", "scale.poly", "area.poly", "get.pts", "coerce", "tristrip", "triangulate")
+Documentation
+- .Rd files placed in man/subdir
+- written in a specific markup language
+- required for every exported function - another eason to limit exported functions
+- you can document other things like concepts, package overview
+Help file example: line function
+\name{line}
+\alias{line}
+\alias{residuals.tukeyline}
+\title{Robust Line Fitting}
+\description{
+Fit a line robustly as recommended in \emph{Exploratory Data Analysis}.
+}
+\usage{
+line(x,y)
+}
+\arguments{
+\item{x,y}{the arguments can be any way of specifying x-y pairs. See
+\code{\link{xy.coords}}.}
+}
+\details{
+Cases with missing values are omitted.
+Long vectors are not supported.
+}
+\value{
+An object of class \code{"tukeyline"}.
+Methods are available for the generic functions \code{coef}, \code{residuals}, \code{fitted}, and \code{print}.
+}
+\references{
+Tukey, J.W. (1977).
+\emph{Exploratory Data Analysis}, 
+Reading Massachusetts: Addison-Wesley.
+}
+Building and checking
+- R CMD build is a command-line program that creates a package archive file (.tar.gz)
+- R CMD check runs a battery of tests on the package
+- you can run R CMD build or R CMD check from the command-line using a terminal or command-shell application
+- you can also run them from R using the system() function
+system("R CMD build newpackage")
+system("R CMD check newpackage")
+Checking
+- R CMD check runs a battery of tests:
+- documenation exists
+- code can be loaded, no major coding problems or errors
+- run examples in documentation
+- check docs match code
+- all tests must pass to put package on CRAN
+Getting started
+- the package.skeleton function in the utils package creates a 'skeleton' R package
+- directory structure (R/, man/), DESCRIPTION file, NAMESPACE file, documentation files
+- if there are functions visible in your workspace, it writes R code files ot the R/ directory
+- documentation stubs are created in man/
+- you need to fill in the rest!
+Summary
+- R packages provide a systematic way to make R code available to others
+- standards ensure that packages have a minimal amount of documentation and robustness
+- obtained from CRAN, Bioconductor, Github, etc.
+Classes and Methods in R
+- a system for doing OOP
+- R was originally quite interesting because it is both interactive AND has a system for object orientation
+- other languages which support OOP (C++, Java, Lisp, Python, Perl) generally speaking are not interactive languages
+- in R, much of the code for supporting classes/methods is written by John Chambers himself (creator of S), and documenated in the book Programming with Data: A guide to the S language
+- a natural extension of Chambers' idea of allowing someone to cross the user-to-programmer spectrum
+- OOP is a bit different in R than in other languages - even if you are familiar with the idea, may want to pay attention to the details
+Two styles of classes and methods
+- S3 classes / methods
+* included with version 3 of the S language
+* informal, a little klunky
+* sometimes called old-style classes / methods
+S4 classes / methods
+* more formal and rigorous
+* included with S-PLUS 6 and R 1.4.0 (Dec 2001)
+* also called new-style classes / methods
+Two worlds living side by side
+- for now and forseeable future, S3 and S4 classes/methods are separate systems (but they can be mixed to some degree)
+- each system can be used fairly independently of the other
+- developers of new projects are encouraged to use S4 - used extensively in the Bioconductor project
+- but many developers still use S3 because they are 'quick and dirty' and easier
+- here, focus is mostly on S4
+- code for implementing S4 in R is in the methods package, which is usually loaded by default
+OOP in R
+- a class is a description of a thing. a class can be defined using setClass() in the methods package
+- an object is an instance of a class. objects can be created using new()
+- a method is a function that only operates on a certain class of objects
+- a generic function is an R function which dispatches methods. a generic function typically encapsulates a 'generic' concept - eg plot, mean, predict, etc. The generic function does not actually do any computation.
+- a method is the implementation of a generic function for an object of a particular class
+Things to look up
+- help files for the 'methods' package are extensive, do read as they are the primary documentation
+- may want to start with ?Classes and ?Methods
+- check out ?setClass, ?setMethod, ?setGeneric
+- some gets technical, will make more sense with experience
+- most of the documentation in the methods package is oriented towards developers/programmers as these are the primary people using classes/methods
+Classes
+- all objects in R have a class which can be determined by the class function
+- class(l); class(TRUE); class(rnorm(100)); class(NA)
+- Data classes go beyond the atomic classes
+- class(modFit) # e.g from previous: lm
+Generics / Methods in R
+- S4 and S3 style generic functions look different but conceptually they are the same (they play the same role)
+- when you program you can write new methods for an existing generic OR create your own generics and associated methods
+- of course, if a data type does not exist in R that matches your needs, you can always define a new class along with generics/methods that go with it
+An S3 generic function (in the 'base' package)
+- mean, print functions are generic
+mean # has UseMethod("mean")
+S3 methods
+- the mean generic function has a number of methods associated with it
+methods("mean") # mean.Date, mean.default, mean.difftime, mean.POSIXct, mean.POSIXlt
+An S4 generic function
+- the show function is from the methods package ind is the S4 equivalent of print
+- the show function is usually not called directly (much like print) because objects are auto-printed
+S4 methods
+showMethods("show") # lots of objects...
+Generic / method mechanism
+- the first arg of a generic function is an object of a particular class (there may be other args)
+1. the generic function checks the class of the object
+2. a search is done to see if there is an appropriate method for that class
+3. if there exists a method for that class, then that method is called on the object and we're done
+4. if a method for that class does not exist, a search is done to see if there is a default method for the generic. if a default exists, it is used
+5. if a default method doesn't exist, then an error is thrown
+Examining code for methods
+- you cannot just print the code for a method like other functions because the code for the method is usually hidden
+- if you want to see the code for an S3 method, you can use the function getS3method
+- the call is getS3method(<generic>, <class>)
+- for S4 methods you can use the function getMethod
+- the call is getMethod(<generic>, <signature>) (more details later)
+S3 Class/method: example 1
+set.seed(2)
+x <- rnorm(100)
+mean(x)
+What is happening there:
+- class of x is numeric
+- but there is no mean method for 'numeric' objects!
+- so we call the default function for mean
+head(getS3method("mean", "default"), 10)
+tail(getS3method("mean", "default"), 10)
+Example 2
+set.seed(3)
+df <- data.frame(x = rnorm(100), y=1:100)
+sapply(df, mean)
+Here:
+1 the class of df is data.frame, each column can be an obj of a different class
+- we sapply over the columns and call the mean function
+- in each column, mean checks the class of the object and dispatches the appropriate method
+- we have a numeric column and an integer column; mean calls the default method for both
+Calling methods directly
+- some S3 methods are visible to the user (i.e. mean.default)
+- NEVER call methods directly
+- use the generic function and let the method be dispatched automatically
+- with S4 methods you cannot call them directly at all
+S3 Class/method: Example 3:
+plot function - generic, and behavior depends on the object being plotted
+set.seed(10)
+x <- rnorm(100)
+plot(x)
+for time series objects, plot connects the dots
+set.seed(10)
+x <- rnorm(100)
+x <- as.ts(x)
+plot(x) # lines not dots
+Write your own methods!
+- if you write new methods for new classes, you'll probably end up writing methods for the following generics: print/show, summary, plot
+- there are 2 ways that you can extend the R system via classes/methods:
+* write a method for a new class but for an existing generic funciton (i.e like print)
+* write new generic functions and new methods for those generics
+S4 Classes
+- why would you want to create a new class?
+- to represent new types of data (eg gene expression, space-time, hierarchical, sparse matrices
+- new concepts/ideas that haven't been thought of yet (eg a fitted point process model, mixed-effects model, a sparse matrix)
+- to abstract/hide implementation details from the user I say things are 'new' meaning that R does not know about them (not that they are new to the statistical community)
+S4 Class/method: creating a new class
+- a new class can be defined using the setClass function
+- at a minimum you need to specify the name of the class
+- you can also specify data elements that are called slots
+- you can then define methods for the class with the setMethod function
+- information about a class definition can be obtained with the showClass function
+S4 Class/method: Polygon class
+- creating new classes/methods is usually not something done at the console; you likely want to save the code in a separate file
+- library(methods)
+setClass("polygon", representation(x="numeric", y="numeric"))
+- the slots for this class are x and y
+- the slots for an S4 object can be accessed with the @ operator
+- a plot method can be created with the setMethod function
+- for setMethod you need to specify a generic function (plot), and a signature
+- a signature is a character vector indicating the classes of objects that are accepted by the method
+- in this case, the plot method will take one type of object, a polygon object
+creating a plot method with setMethod:
+setMethod("plot", "polygon", 
+function(x,y,...) {
+xp <- c(x@x, x@x[1])
+yp <- c(x@y, x@y[1])
+lines(xp, yp)
+})
+## creating a generic function for 'plot' from package 'graphics' in the global environment
+## [1] "plot"
+- notice that the slots of the polygon (the x- and y- coordinates) are accessed with the @operator
+- after calling setMethod, the new plot method will be added to the list of methods for plot
+library(methods)
+showMethods("plot")
+## Function: plot (package graphics)
+## x = "ANY"
+## x = "ploygon"
+- notice that the signature for class polygon is listed. the method for ANY is the default method and it is what is called when no other signature matches
+p <- new("polygon", x = c(1,2,3,4), y = c(1,2,3,1))
+plot(p) # this plots a triangle
+Summary
+- developing classes and associated methods is a powerful way to extend the functionality of R
+- classes define new data types
+- methods extend generic functions to specify the behavior of generic functions on new classes
+- as new data types and concepts are created, classes/methods provide a way for you to develop an intuitive interface to those data/concepts for users
+Where to look, places to start
+- the best way to learn this stuff is to look at examples
+- there are quite a few examples on CRAN which use S4 classes/methods. you can usually tell if they use S4 if the methods package is listed in the Depends: field
+- Bioconductor.org - a rich resource, even if you know nothing about bioinformatics
+- some packages on CRAN (as far as I know) - SparseM, gpclib, flexmix, its, lem4, orientlib, filehash
+- the stats4 package (comes with R) has a bunch of classes / methods for doing maximum likelihood analysis
