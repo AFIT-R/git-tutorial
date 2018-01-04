@@ -20,7 +20,7 @@ div.toolbar {
   transition: all 0.6s ease;
 }
 div.toolbar.shrink {
-  font-size: 60%;
+  font-size: 50%;
   color: #FFF;
   background-color: #2C3E50;
   font-weight: normal;
@@ -149,11 +149,12 @@ div.slide h2 {
   font-weight: bold;
   font-style: italic;
   text-transform: capitalize;
+  color: #2C3E50;
 }
 div.slide h2:after {
   content: ' ';
   display: block;
-  border: 1pt solid #149C82;
+  border: 1.5pt solid #149C82;
   margin-top: 10px;
 }
 div.slide h2:before {
