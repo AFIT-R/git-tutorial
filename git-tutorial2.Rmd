@@ -1,8 +1,8 @@
 ---
-title: "Collaborative Development with Git and GitHub"
-subtitle: "A Gentle Introduction"
+title: "Collaborative Software Development "
+subtitle: "A Gentle Introduction to Git and GitHub"
 date: '`r format(Sys.Date(), "%d %B %Y")`'
-footer: "An Gentle Introduction to Using Git and GitHub"
+footer: "An Gentle Introduction to Git and GitHub"
 author: "Jason Freels"
 output: 
   slidy_presentation:
@@ -20,34 +20,13 @@ shiny::includeScript("js/jquery.min.js")
 shiny::includeScript("js/jkf-scroll.js")
 ```
 
-## This presentation answers the following questions
+## This presentation covers the following concepts
 
 - Getting started with Git and Github
 
 - The basics of version control systems
 
-- Using Git and Github for collaborative development
-
-
-What is Git 
-- What is GitHub?
-- How do I install and configure Git?
-- How do I get started with Github?
-- What are version control systems?
-- Why should someone use a version control system?
-- What is a centralized version control system (CVCS)?
-- What is a decentralized (aka distributed) version control system (DVCS)?
-- What are the main Git commands and what do these commands do?
-- What's inside the `.git` directory?
-- What are the different ways to interact with Git?
-- What is a Git remote and how do I add one to a repo?  
-
-
-
-- How do I get started using Git and Github?
-
-    + From the command line
-    + Within the RStudio IDE 
+- Using Git and Github for collaborative software development
 
 # Getting Started with Git & Github
 
@@ -57,13 +36,29 @@ What is Git
 
 - An excellent way to track and coordinate file changes among many people
 
+- A filing system for every draft of a document
+
 - A tool invented by Linus Torvalds (and the Linux development community) to develop the Linux kernel in 2005
+
+- The most widely used modern version control system in the world -- <focus>by far</focus>
+
+- Free software distributed under the terms of the [GNU General Public License](https://en.wikipedia.org/wiki/GNU_General_Public_License) version 2
+
+- While mainly used for code, Git can be used to manage any type of file/project 
+  
+    + Word documents
+    
+    + Final Cut projects
+    
+    + The entire volume of [German federal laws](https://github.com/bundestag/gesetze)
 
 ## What is GitHub?
 
-- A web-based service for hosting Git repositories
+- A code sharing and publishing service
 
-- The single largest hosting site for Git repositories
+- A social networking site for programmers
+
+- The single largest web-based service for hosting Git repositories
 
 - A popular way to collaborate on code (no more emails and zip files!!)
 
@@ -71,23 +66,21 @@ What is Git
     
     + All the [cool kids](https://github.com/auburngrads) are using it!
 
-# Why Should You use Git/GitHub?
+- Includes several features beyond command-line Git
 
-## Git enables a faster, easier workflow
+    + A Web-based graphical interface
+    
+    + Task/project management tools
+    
+    + A [martketplace](https://github.com/marketplace) of integrations for many 3^rd^ party services
+    
+    + Issues!
+    
+    + Forking!
 
-<img src="before-version-control.png" style="float: right; padding: 100px 300px 0px 5px; width: 250px;">
+# Why Should You use Git and GitHub?
 
-<ul style="display:inherit;">
-- A typical workflow
-
-    * File renaming
-    * Absurd folder structures
-    * Zipped folders
-    * E-mailing files back and forth
-    * Lost files
-    * Shared directories (one-at-a-time)
-    * Ever try merging MS Word files with tracked changes?!
-</ul>
+## For a fast, easy, and stress-free workflow
 
 <div id="container2">
 <div id="container1">
@@ -95,7 +88,8 @@ What is Git
 <div id="col1">
 <center>
 Your workflow - <font color='red'><u>without</u></font> Git
-</br>
+<br/>
+<br/>
 <img src="giphy-frustrated.gif" style="width: 450px;">
 </center>
 </div>
@@ -104,33 +98,69 @@ Your workflow - <font color='red'><u>without</u></font> Git
 <center>
 Your workflow - <font color='green'><u>with</u></font> Git
 <br/>
+<br/>
 <img src="images/giphy-thumbsup.gif" style="width: 450px; height:286px;">
 </center>
 </div>
+</div>
+</div>
 
-</div>
-</div>
+<br/>
+
+<img src="before-version-control.png" style="float: right; padding: 100px 300px 0px 5px; width: 250px;">
+
+<ul style="display:inherit;">
+- Workflows without Git typically consist of
+
+    * Lots of File renaming
+    * Absurd folder structures
+    * Zipped folders
+    * E-mailing files back and forth
+    * Lost files
+    * Shared directories (one-at-a-time)
+    * Ever try merging MS Word files with tracked changes?!
+</ul>
+
+# OK, I'm interested in using Git/Github how do I get Started
+
+## Installing Git <!--Kallhoff-->
+
+## Configuring Git <!--Munson-->
+
+## Setting up a GitHub account <!--Stuntz-->
+
+
+# Version Control Systems
+
+## The Basics of Version Control Systems
+
+- Before getting too deep into Git, let's take a step back 
+
+- Git is one of many different version control systems (VCS)
+
+- It's important to understand what a VCS is and the different types of VCS that exist
+
+## What are version control systems? <!--Butt-->
+
+## Why should some use a version control system? <!--Elliot-->
+
+## What is a Centralized Version Control System (CVCS)? <!--Gallagher-->
+
+## What is a Decentralized (aka Distributed) Version Control System (DVCS)? <!--Johnson-->
+
+## What are the advantages of using a DVCS instead of a CVCS? <!--Uhorchak-->
+
+
+# Using Git
 
 ## Is Git hard to learn?
 
-- New Git users often struggle to understand how to use Git?
+- New users often struggle with understanding how to use Git
 
 - This misunderstanding is driven by the fact that there seems to be an endless number of use cases
 
 - Git's not hard to learn -   
     + There are problem 
-
-- Before 
-
-## What's a decentralized version control system?
-
-
-
-<center>
-<img src="Git.png" style="width: 400px; background-color: black;">
-</center>
-
-
 
 <!--## 
     + what is Git?
@@ -149,9 +179,9 @@ Your workflow - <font color='green'><u>with</u></font> Git
 -->
 
 
-## Using Git
+# Using Git
 
-## Using Git
+## Methods of Using Git
 
 - There several Methods for using Git 
 
@@ -199,7 +229,7 @@ Your workflow - <font color='green'><u>with</u></font> Git
     + You need modify the global configuration file to tell Git who you are.
     + Open a terminal or Git Bash (Windows) and enter the following two lines: (with the obvious modifications) 
     
-```{shell, echo=TRUE}
+```{asis, echo=TRUE}
 $ git config --global user.name "Brandon Greenwell"
 $ git config --global user.email greenwell.brandon@gmail.com
 ```
@@ -244,12 +274,12 @@ add <- function(x, y) { x * y }
 
 - For example, the code below takes me to the folder called `arithmetic` on my Desktop
 
-```{shell, echo=TRUE}
+```{sh, echo=TRUE, eval=F}
 cd C:/Users/greenweb/Desktop/arithmetic
 ```
 
 - Then, to initialize this as a Git repo, just type
-```{shell, echo=T}
+```{sh, echo=T, eval=F}
 git init
 ```
 
@@ -259,11 +289,14 @@ git init
 ## Initializing a repo in an existing directory
 
 If you want to start version controlling all the files, you need to start tracking them. In the terminal, type the following:
-```shell
+
+```{sh, eval=F}
 git add --all
 ```
+
 then type:
-```shell
+
+```{sh, eval=F}
 git commit -m "first commit"
 ```
 
@@ -281,8 +314,6 @@ knitr::include_graphics("progit2.png")
 ```{r, out.width = "600px"}
 knitr::include_graphics("Octocat.png")
 ```
-
-
 
 ## Account setup and configuration
 
@@ -342,11 +373,13 @@ knitr::include_graphics("new-repo-5.png")
 ## Making changes and pushing them to GitHub
 
 Fix the obvious typo in `add.R`. Then, take a snapshot (i.e., `git add/commit`) and push the changes to GitHub (i.e., `git push`)!
-```shell
+
+```{sh, eval=F}
 git add --all
 git commit -m "fix typo"
 git push origin master
 ```
+
 Refresh your browser to see the changes.
 
 **Tip\:** It's good practice to do this every time you make a key change (e.g., fix a typo, add a new function to an R script, etc.).
