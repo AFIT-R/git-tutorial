@@ -130,7 +130,6 @@ Your workflow - <font color='green'><u>with</u></font> Git
     + Download Git from https://git-scm.com/downloads. 
     + Accept the installation defaults for your particular operating system
 
-
 ## Installing Git (windows)
 
 - For Windows users
