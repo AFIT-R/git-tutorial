@@ -14,7 +14,7 @@ graphics: yes
 # Overview
 
 ```{r setup, echo=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, fig.align = 'center')
 shiny::includeCSS("css/flatly-style.css")
 shiny::includeScript("js/jquery.min.js")
 shiny::includeScript("js/jkf-scroll.js")
@@ -103,8 +103,9 @@ shiny::includeScript("js/jkf-scroll.js")
 <center>
 Your workflow - <font color='red'><u>without</u></font> Git
 <br/>
-<br/>
-<img src="giphy-frustrated.gif" style="width: 450px;">
+<p>
+<img src="giphy-frustrated.gif" style="width: 450px; margin-bottom:50px;">
+</p>
 </center>
 </div>
 
@@ -112,8 +113,9 @@ Your workflow - <font color='red'><u>without</u></font> Git
 <center>
 Your workflow - <font color='green'><u>with</u></font> Git
 <br/>
-<br/>
-<img src="images/giphy-thumbsup.gif" style="width: 450px; height:286px;">
+<p>
+<img src="images/giphy-thumbsup.gif" style="width: 450px; height:286px; margin-bottom: 50px;">
+</p>
 </center>
 </div>
 </div>
@@ -123,51 +125,70 @@ Your workflow - <font color='green'><u>with</u></font> Git
 
 ## Installing Git <!--Kallhoff-->
 
-## Installing Git (Mac/linux/unix)
+- Installing Git is simple - on Mac/Windows/Linux/Unix
 
-- For Mac, Linux, and Unix users
+    1. Download Git from <https://git-scm.com/downloads>. 
+    2. For Mac/Linux/Unix - Accept all installation defaults
+    3. For Windows - accept all installation defaults __EXCEPT__ Choose Use Git Bash as the default editor
 
-    + Download Git from https://git-scm.com/downloads. 
-    + Accept the installation defaults for your particular operating system
+```{r, out.width = "800px", fig.align='center'}
+knitr::include_graphics("images/win-git.png")
+```
 
+## Setting up a GitHub account <!--Stuntz-->
 
-## Installing Git (windows)
+- First, navigate to [https://github.com/](https://github.com/)
 
-- For Windows users
+```{r, out.width = "800px", fig.align='center'}
+knitr::include_graphics("images/github.png")
+```
 
-    + Download Git from https://git-scm.com/downloads. 
-    + Accept the installation defaults __EXCEPT__ Choose Use Git Bash
+- Enter some basic information about your new account
 
-<img src="images/win-git.png" width='50%' style="border: 0px; box-shadow: 0;">
+    + A pithy username (hopefully it's still available)
+    + An email address (don't use your @afit.edu email)
+    + A password
 
-## Setting Git up for the first time
+```{r, out.width = "400px"}
+knitr::include_graphics("images/signup.png")
+```
 
-- After Git has installed
+- Set up your profile
 
-    + You need modify the global configuration file to tell Git who you are.
+```{r, out.width = "700px"}
+knitr::include_graphics("images/my-profile.png")
+```
+
+## Configure Git for first time <!--Munson-->
+
+- After installing Git and setting up a Github account
+
+    + You need modify the `global` Git configuration file to tell Git who you are
     + Open a terminal or Git Bash (Windows) and enter the following two lines: (with the obvious modifications) 
     
 ```{sh, eval=!TRUE}
-git config --global user.name "Auburngrads"
+# Use Github username 
+git config --global user.name Auburngrads
+
+# Use Github email address
 git config --global user.email auburngrads@live.com
 ```
 
 - Since you passed the option `--global`, you only need to do this once!
 
-## Configuring Git <!--Munson-->
+- Now your all set up to use Git & Github!
 
-## Setting up a GitHub account <!--Stuntz-->
+- <focus>However</focus> - before we dive too deep into Git, we need to take a step back 
 
+    + Git is one of many different version control systems (VCS)
 
-# Version Control Systems
+    + It's important to put Git in context 
+    
+    + You should understand what a VCS is, what types of VCS exist, and how they differ
+
+# Understanding Version Control Systems
 
 ## The Basics of Version Control Systems
-
-- Before getting too deep into Git, let's take a step back 
-
-- Git is one of many different version control systems (VCS)
-
-- It's important to understand what a VCS is and the different types of VCS that exist
 
 ## What are version control systems? <!--Butt-->
 
@@ -180,46 +201,22 @@ git config --global user.email auburngrads@live.com
 ## What are the advantages of using a DVCS instead of a CVCS? <!--Uhorchak-->
 
 
-# Using Git
 
-## Is Git hard to learn?
+# Using Git - Overview
 
-- New users often struggle with understanding how to use Git
+## Expectation management - this tutorial won't cover all use cases
 
-- This misunderstanding is driven by the fact that there seems to be an endless number of use cases
+- New users often struggle learning how to use Git and conclude that it's too hard
 
-- Git's not hard to learn -   
-    + There are problem 
+- This misconception is driven by the fact that there seems to be an endless number of use cases
 
-<!--## 
-    + what is Git?
-    + Installing Git on your machine
-    + basic commands
-    + setting up a Git repo on a local machine
+- The issue is NOT that Git is too <u>hard</u> to learn, rather Git is too <u>big</u> to learn
 
-- GitHub
+- The fact that Github adds it's own functions makes things even bigger and more complicated
 
-    - what is GitHub?
-    - signing up
-    - connecting your local Git repo to GitHub
-    - selecting an awesome avatar will not be covered
+- Remember <focus>Git $\ne$ Github</focus>
 
-# Git
--->
-
-
-# Using Git
-
-## Methods of Using Git
-
-- There several Methods for using Git 
-
-    - At the **command line**
-    - Within an IDE (e.g. RStudio)
-    - From one of several [Git desktop GUI](https://git-scm.com/downloads/guis)
-    - <p class='hover'>Super secret hybrid method</p>
-
-## Which method should you choose?
+## Many Ways To Use Git <!--Trigo-->
 
 - At the **command line**
 
@@ -233,10 +230,15 @@ git config --global user.email auburngrads@live.com
     
 - From a Git [desktop GUI](https://git-scm.com/downloads/guis)
 
-## Installing Git
+    + Works well for many files
+    + Adding another application can interrupt the workflow
 
+- Hybrid method with [libgit2](https://libgit2.github.com/)
 
-## The basic process
+    + Write custom scripts using the `git2r` package
+    + Best option - but comes with a semi-steep learning curve
+
+## The basic process of Git
 
 - Initialize Git version tracking in a directory
 - Add or edit files in the directory
@@ -244,8 +246,11 @@ git config --global user.email auburngrads@live.com
 - Add changed files to the staging area
 - Commit one or changed files to be updated
 - Push commits to the master
+- Send pull requests to collaborate with other users
+- Add a remote for hosting the files at a URL
+- Check out the [Git Flow interactive](https://guides.github.com/introduction/flow/)
 
-## The basic commands you'll use/need
+## The basic Git commands you'll use/need <!--Ramirez/Sevier-->
 
 - `cd` (change directories)
 - `git init` (initialize a folder as a Git repo)
@@ -256,7 +261,7 @@ git config --global user.email auburngrads@live.com
 - `git pull origin master` (update your local repo)
 **Tip\:** Typing `git add --all` will start tracking everything (this is how I almost always use `git add`).
 
-## Using Git commands
+# Using Git commands
 
 - Initialize a repo in an existing directory
 
@@ -279,100 +284,71 @@ cd C:/Users/greenweb/Desktop/arithmetic
 ```
 
 - Then, to initialize this as a Git repo, just type
+
 ```{sh, echo=T, eval=F}
 git init
 ```
 
-**Tip\:** the command line has a history (just like the R console), so you don't need to type as often; just hit the up arrow and make any necessary changes!
+- This add a new directory called `.git` within the arithmetic project directory
 
-
-## Initializing a repo in an existing directory
-
-If you want to start version controlling all the files, you need to start tracking them. In the terminal, type the following:
+- If you want to start version controlling all the files, you need to start tracking them. In the terminal, type the following:
 
 ```{sh, eval=F}
 git add --all
 ```
 
-then type:
+- This adds all of the files to the staging area 
+
+- Then type the following to commit the file changes 
 
 ```{sh, eval=F}
 git commit -m "first commit"
 ```
 
-## How to use Git
+## The .git directory <!--Small-->
 
-* Free book on the Git website: https://git-scm.com/book/en/v2
+# Using Git - Syncing with GitHub
 
-```{r, out.width = "150px"}
-knitr::include_graphics("progit2.png")
-```
+## Overview
 
+- Often you'll want to host a local Git repo on Github to use the collaboration tools
 
-# GitHub
-
-```{r, out.width = "600px"}
-knitr::include_graphics("Octocat.png")
-```
-
-## Account setup and configuration
-
-The first thing you need to do is set up an account: https://github.com/
-
-```{r, out.width = "400px"}
-knitr::include_graphics("signup.png")
-```
-
-**Use the same e-mail address you used when setting up Git!**
-
-
-## Set up your profile
-
-```{r, out.width = "700px"}
-knitr::include_graphics("my-profile.png")
-```
-
-
-## Creating a new repo
+- To do this we'll first need to create a new repo on Github
 
 ```{r, out.width = "600px"}
-knitr::include_graphics("new-repo.png")
+knitr::include_graphics("images/new-repo.png")
 ```
 
-
-## Creating a new repo
+- The name of the Github repo doesn't have to be the same as that of the local repo, but it should 
 
 ```{r, out.width = "600px"}
-knitr::include_graphics("new-repo-2.png")
+knitr::include_graphics("images/new-repo-2.png")
 ```
 
+- Next, we'll add the URL of the Github repo as a `remote` to the local repo 
 
-## Creating a new repo
+- The `remote` acts like an online target for pushed changes 
 
 ```{r, out.width = "700px"}
-knitr::include_graphics("new-repo-3.png")
+knitr::include_graphics("images/new-repo-3.png")
 ```
 
-
-## Creating a new repo
+- Finally, we'll push the an image of the local repo's current state and the entire change history to the `remote` 
 
 ```{r, out.width = "700px"}
-knitr::include_graphics("new-repo-4.png")
+knitr::include_graphics("images/new-repo-4.png")
 ```
 
+# Using Git - Making changes and pushing them to GitHub
 
-## Creating a new repo
+## Fix the typo
 
-Refresh your browswer and see if it worked!
+- The function in the `add.R` file contained a typo
 
-```{r, out.width = "700px"}
-knitr::include_graphics("new-repo-5.png")
-```
+- First, let's fix the obvious typo in `add.R`
 
-
-## Making changes and pushing them to GitHub
-
-Fix the obvious typo in `add.R`. Then, take a snapshot (i.e., `git add/commit`) and push the changes to GitHub (i.e., `git push`)!
+- Now if we run status it should show that one file has been modified 
+- Then, take a snapshot (i.e., `git add/commit`) and push the changes to GitHub (i.e., `git push`)!
 
 ```{sh, eval=F}
 git add --all
@@ -380,15 +356,18 @@ git commit -m "fix typo"
 git push origin master
 ```
 
-Refresh your browser to see the changes.
+- Finally, refresh your browswer and see if it worked!
 
-**Tip\:** It's good practice to do this every time you make a key change (e.g., fix a typo, add a new function to an R script, etc.).
+```{r, out.width = "700px"}
+knitr::include_graphics("images/new-repo-5.png")
+```
 
-\* Make sure you're in the right directory!
+- **Tip\:** It's good practice to do this every time you make a key change (e.g., fix a typo, add a new function to an R script, etc.).
 
+- Make sure you're in the right directory!
 
-## All done!
+# All done!
+
+## Any questions?
 
 <center>![](giphy-shaun.gif)</center>
-
-**Any questions?**
