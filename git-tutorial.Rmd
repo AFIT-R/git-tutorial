@@ -1,113 +1,194 @@
 ---
-title: "A (Light) Introduction to Git and GitHub"
-subtitle: "...using the command line!"
-author: "Brandon M. Greenwell"
-date: "July 27, 2017"
-output:
-  ioslides_presentation:
-    logo: logo.png
+title: "Using Git and GitHub"
+subtitle: "A Gentle Introduction"
+date: '`r format(Sys.Date(), "%d %B %Y")`'
+footer: "An Gentle Introduction to Using Git and GitHub"
+output: 
+  slidy_presentation:
+    smart: no
+    fig_caption: yes
+graphics: yes
 ---
 
-```{r setup, include=FALSE}
+# Overview
+
+```{r setup, echo=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+shiny::includeCSS("css/slidy-flatly.css")
+shiny::includeScript("js/jquery.min.js")
+shiny::includeScript("js/jkf-scroll.js")
 ```
 
+## This presentation answers the following questions
 
-## What you will learn
+- What are Git and GitHub?
+- What are version control systems?
+- Why should someone use a version control system?
+- What is a centralized version control system (CVCS)?
+- What is a decentralized (aka distributed) version control system (DVCS)?
+- How do I install and configure Git?
+- What are the main Git commands and what do these commands do?
+- What's inside the `.git` directory?
+- What are the different ways to interact with Git?
+- What is a Git remote and how do I add one to a repo?  
+- How do I get started with Github?
 
-* Git
-    - what is Git?
-    - installing Git on your machine
-    - basic commands
-    - setting up a Git repo on a local machine
 
-* GitHub
+- How do I get started using Git and Github?
+
+    + From the command line
+    + Within the RStudio IDE 
+
+# Overview of Git & Github
+
+## What is Git?
+
+- A <u>decentralized<u/> version control system that's free and open source
+
+- An excellent way to track and coordinate file changes among many people
+
+- A tool invented by Linus Torvalds (and the Linux development community) to develop the Linux kernel in 2005
+
+## Is Git hard to learn?
+
+- New Git users often struggle to understand how to use Git?
+
+- This misunderstanding is driven by the fact that there seems to be an endless number of use cases
+
+- Git's not hard to learn -   
+    + There are problem 
+
+- Before 
+
+## What's a decentralized version control system?
+
+
+
+<center>
+<img src="Git.png" style="width: 400px; background-color: black;">
+</center>
+
+# What is GitHub?
+
+- A web-based service for hosting Git repositories
+
+- The single largest host for Git repositories
+
+- A popular way to collaborate on code (no more emails and zip files!!)
+
+    + The development versions of many R packages are hosted on GitHub: https://github.com/tidyverse/ggplot2
+    + All the [cool kids](https://github.com/auburngrads) are using it!
+
+<!--## 
+    + what is Git?
+    + Installing Git on your machine
+    + basic commands
+    + setting up a Git repo on a local machine
+
+- GitHub
+
     - what is GitHub?
     - signing up
     - connecting your local Git repo to GitHub
     - selecting an awesome avatar will not be covered
 
+# Git
+-->
 
-# 
+## Why Should You use Git/GitHub?
 
-```{r, out.width = "400px", fig.align = "center"}
-knitr::include_graphics("Git.png")
-```
+## Git enables a faster, easier workflow
 
+<img src="before-version-control.png" style="float: right; padding: 0px 0px 0px 5px; width:250px;">
 
-## A typical workflow
+<ul style="display:inherit;">
+- A typical workflow
 
-<div class="columns-2">
-* File renaming
-* Absurd folder structures
-* Zipped folders
-* E-mailing files back and forth
-* Lost files
-* Shared directories (one-at-a-time)
-* Ever try merging two MS Word documents with tracked changes?!
+    * File renaming
+    * Absurd folder structures
+    * Zipped folders
+    * E-mailing files back and forth
+    * Lost files
+    * Shared directories (one-at-a-time)
+    * Ever try merging MS Word files with tracked changes?!
+</ul>
 
-```{r, out.width = "300px"}
-knitr::include_graphics("before-version-control.png")
-```
-</div>
-
-
-## 
+## Your workflow - <font color='red'><u>without</u></font> Git
 
 <center>![](giphy-frustrated.gif)</center>
 
+## Your workflow - <font color='green'><u>with</u></font> Git
 
-
-##
-
-```{r, out.width = "600px"}
-knitr::include_graphics("fever.jpg")
-```
-
-
-## What is Git?
-
-* Think of it as MS Word's "Tracked Changes" on steroids
-* Invented by Linus Torvalds (and the Linux development community) in 2005
-* Git provides an excellent way to track changes in computer files (e.g., R scripts, LaTeX files, etc.) and coordinating among many users.
-* Free book on the Git website: https://git-scm.com/book/en/v2
-
-```{r, out.width = "150px"}
-knitr::include_graphics("progit2.png")
-```
-
+<center>![](images/giphy-thumbsup.gif)</center>
 
 ## Using Git
 
-There are a lot of different ways to use Git, for example, the **command line**, one of several desktop applications, and even within RStudio.
+## Using Git
 
-* I recommend the command line for three reasons: **(1)** it's simpler (trust me), **(2)** it's (probably) faster, and **(3)** it works the same on Windows, Mac, and Linux
-* You'll need to know how to open the Terminal in Mac or Command Prompt or Powershell in Windows
-* Using it via RStudio is convenient, especially if you're building R packages, etc.
-* The desktop application is convenient too, but not available on all operating systems
+- There several Methods for using Git 
 
+    - At the **command line**
+    - Within an IDE (e.g. RStudio)
+    - From one of several [Git desktop GUI](https://git-scm.com/downloads/guis)
+    - <p class='hover'>Super secret hybrid method</p>
+
+## Which method should you choose?
+
+- At the **command line**
+
+    + Simplest (really!) & fastest
+    + Works the same on Windows, Mac, and Linux
+    
+- Within an IDE (e.g. RStudio)
+
+    + Convenient when building R packages
+    + Can be clunky to update many files
+    
+- From a Git [desktop GUI](https://git-scm.com/downloads/guis)
 
 ## Installing Git
 
-Installation is rather straightforward: https://git-scm.com/downloads. Just follow the instructions for your particular operating system
+## Installing Git (Mac/linux/unix)
 
-**Tip\:** Windows users, you should install from here: https://git-for-windows.github.io/
+- For Mac, Linux, and Unix users
+
+    + Download Git from https://git-scm.com/downloads. 
+    + Accept the installation defaults for your particular operating system
+
+## Installing Git (windows)
+
+- For Windows users
+
+    + Download Git from https://git-scm.com/downloads. 
+    + Accept the installation defaults __EXCEPT__ Choose Use Git Bash
+
+<img src="images/win-git.png" width='50%' style="border: 0px; box-shadow: 0;">
 
 ## Setting Git up for the first time
 
-After Git is successfully installed, open up a terminal and write (with the obvious modifications) the following two lines:
-```shell
+- After Git has installed
+
+    + You need modify the global configuration file to tell Git who you are.
+    + Open a terminal or Git Bash (Windows) and enter the following two lines: (with the obvious modifications) 
+    
+```{shell, echo=TRUE}
 $ git config --global user.name "Brandon Greenwell"
 $ git config --global user.email greenwell.brandon@gmail.com
 ```
-**Note:** Since you passed the option `--global`, you only need to do this once!
 
-**Note:** Technically, you don't need to do this step, but you should!
+- Since you passed the option `--global`, you only need to do this once!
 
-**Note:** Windows users should use the Bash terminal that was installed with Git, not the normal Windows command line!
+## The basic process
 
+- Initialize Git version tracking in a directory
+- Add or edit files in the directory
+- Check the status of file changes in the directory
+- Add changed files to the staging area
+- Commit one or changed files to be updated
+- Push commits to the master
 
 ## The basic commands you'll use/need
+
 - `cd` (change directories)
 - `git init` (initialize a folder as a Git repo)
 - `git add <file-name>` (start tracking a new file)
@@ -115,31 +196,34 @@ $ git config --global user.email greenwell.brandon@gmail.com
 - `git clone` (clone/copy another Git repo [e.g., from GitHub])
 - `git push origin master` (push your master branch to your origin server)
 - `git pull origin master` (update your local repo)
-
 **Tip\:** Typing `git add --all` will start tracking everything (this is how I almost always use `git add`).
 
+## Using Git commands
 
-## Initializing a repo in an existing directory
+- Initialize a repo in an existing directory
 
-Make a new folder called `arithmetic` anywhere on your computer (e.g., the Desktop) that contains a single R script called `add.R` containing the function
-```r
-add <- function(x, y) {
-  x * y
-}
+    + Create a new folder called `arithmetic` anywhere on your computer (e.g., the Desktop) 
+    + In this folder, create a new R script file called `add.R` 
+    + In this new file add the following code
+    
+```{r, echo=TRUE}
+add <- function(x, y) { x * y }
 ```
 
-
 ## Initializing a repo in an existing directory
 
-If you want to begin tracking an existing project in Git, you need to start by going to the project's root directory. For example, 
-```shell
+- Next, open a terminal or Git Bash (Windows) and go to the project's root directory
+
+- For example, the code below takes me to the folder called `arithmetic` on my Desktop
+
+```{shell, echo=TRUE}
 cd C:/Users/greenweb/Desktop/arithmetic
 ```
-takes me to the folder called `arithmetic` on my Desktop. Then, to initialize this as a Git repo, just type
-```shell
+
+- Then, to initialize this as a Git repo, just type
+```{shell, echo=T}
 git init
 ```
-
 
 **Tip\:** the command line has a history (just like the R console), so you don't need to type as often; just hit the up arrow and make any necessary changes!
 
@@ -155,6 +239,14 @@ then type:
 git commit -m "first commit"
 ```
 
+## How to use Git
+
+* Free book on the Git website: https://git-scm.com/book/en/v2
+
+```{r, out.width = "150px"}
+knitr::include_graphics("progit2.png")
+```
+
 
 # GitHub
 
@@ -162,15 +254,6 @@ git commit -m "first commit"
 knitr::include_graphics("Octocat.png")
 ```
 
-
-## What is GitHub?
-
-- GitHub is a web-based Git repo and Internet hosting service
-- It is the single largest host for Git repos
-- Quite popular for code collaboration (no more emails and zip files!!)
-- Mostly used for code
-- The development versions of a lot of R packages are hosted on GitHub: https://github.com/tidyverse/ggplot2
-- All the [cool people](https://github.com/bgreenwell) are using it!
 
 
 ## Account setup and configuration
