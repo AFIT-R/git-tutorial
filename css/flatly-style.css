@@ -200,6 +200,11 @@ div.slide.titlepage h1.title {
   text-transform: capitalize;
   position: relative;
 }
+
+.slide.titlepage p {
+  color: #FFF;
+}
+
 @media screen and (max-device-width: 1024px) {
   div.slide {
     font-size: 100%;
@@ -452,6 +457,7 @@ dl {
 p {
   margin-left: 0;
   margin-right: 0;
+  color: #2C3E50;
 }
 .author {
   margin-left: 1em;
