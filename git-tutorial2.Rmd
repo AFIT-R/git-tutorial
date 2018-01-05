@@ -82,6 +82,20 @@ shiny::includeScript("js/jkf-scroll.js")
 
 ## For a fast, easy, and stress-free workflow
 
+<img src="before-version-control.png" style="float: right; padding: 100px 300px 0px 5px; width: 250px;">
+
+<ul style="display:inherit;">
+- Workflows without Git typically consist of
+
+    * Lots of File renaming
+    * Absurd folder structures
+    * Zipped folders
+    * E-mailing files back and forth
+    * Lost files
+    * Shared directories (one-at-a-time)
+    * Ever try merging MS Word files with tracked changes?!
+</ul>
+
 <div id="container2">
 <div id="container1">
 
@@ -105,25 +119,39 @@ Your workflow - <font color='green'><u>with</u></font> Git
 </div>
 </div>
 
-<br/>
-
-<img src="before-version-control.png" style="float: right; padding: 100px 300px 0px 5px; width: 250px;">
-
-<ul style="display:inherit;">
-- Workflows without Git typically consist of
-
-    * Lots of File renaming
-    * Absurd folder structures
-    * Zipped folders
-    * E-mailing files back and forth
-    * Lost files
-    * Shared directories (one-at-a-time)
-    * Ever try merging MS Word files with tracked changes?!
-</ul>
-
-# OK, I'm interested in using Git/Github how do I get Started
+# OK, I'm interested in using Git/Github how do I get Started?
 
 ## Installing Git <!--Kallhoff-->
+
+## Installing Git (Mac/linux/unix)
+
+- For Mac, Linux, and Unix users
+
+    + Download Git from https://git-scm.com/downloads. 
+    + Accept the installation defaults for your particular operating system
+
+## Installing Git (windows)
+
+- For Windows users
+
+    + Download Git from https://git-scm.com/downloads. 
+    + Accept the installation defaults __EXCEPT__ Choose Use Git Bash
+
+<img src="images/win-git.png" width='50%' style="border: 0px; box-shadow: 0;">
+
+## Setting Git up for the first time
+
+- After Git has installed
+
+    + You need modify the global configuration file to tell Git who you are.
+    + Open a terminal or Git Bash (Windows) and enter the following two lines: (with the obvious modifications) 
+    
+```{sh, eval=!TRUE}
+git config --global user.name "Auburngrads"
+git config --global user.email auburngrads@live.com
+```
+
+- Since you passed the option `--global`, you only need to do this once!
 
 ## Configuring Git <!--Munson-->
 
@@ -206,35 +234,6 @@ Your workflow - <font color='green'><u>with</u></font> Git
 
 ## Installing Git
 
-## Installing Git (Mac/linux/unix)
-
-- For Mac, Linux, and Unix users
-
-    + Download Git from https://git-scm.com/downloads. 
-    + Accept the installation defaults for your particular operating system
-
-## Installing Git (windows)
-
-- For Windows users
-
-    + Download Git from https://git-scm.com/downloads. 
-    + Accept the installation defaults __EXCEPT__ Choose Use Git Bash
-
-<img src="images/win-git.png" width='50%' style="border: 0px; box-shadow: 0;">
-
-## Setting Git up for the first time
-
-- After Git has installed
-
-    + You need modify the global configuration file to tell Git who you are.
-    + Open a terminal or Git Bash (Windows) and enter the following two lines: (with the obvious modifications) 
-    
-```{asis, echo=TRUE}
-$ git config --global user.name "Brandon Greenwell"
-$ git config --global user.email greenwell.brandon@gmail.com
-```
-
-- Since you passed the option `--global`, you only need to do this once!
 
 ## The basic process
 
